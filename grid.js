@@ -1,6 +1,22 @@
 let current_pos;
 let fruit_pos;
 let score = 0;
+let mySound;
+
+function sound(src) {
+  this.sound = document.createElement("audio");
+  this.sound.src = src;
+  this.sound.setAttribute("preload", "auto");
+  this.sound.setAttribute("controls", "none");
+  this.sound.style.display = "none";
+  document.body.appendChild(this.sound);
+  this.play = function () {
+    this.sound.play();
+  };
+  this.stop = function () {
+    this.sound.pause();
+  };
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   const main_stage = document.querySelector("#main-stage");
@@ -12,8 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
   main_stage.appendChild(table);
   table.appendChild(tbody);
 
-  let allTiles = [];
-
   function drawMainStage() {
     let count = 0;
     for (let i = 0; i < 30; i++) {
@@ -22,7 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
       for (let j = 0; j < 20; j++) {
         let td = document.createElement("td");
         td.innerText = count;
-        allTiles.push(count);
         td.id = count.toString();
         tr.appendChild(td);
         count++;
@@ -68,6 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     player.classList.add("player");
     console.log(current_pos);
+    mySound = new sound("sounds/tick.mp3");
+    mySound.play();
     checkCollision(current_pos, fruit_pos);
   }
   document.addEventListener("keyup", movePlayer);
@@ -85,11 +100,14 @@ document.addEventListener("DOMContentLoaded", () => {
     let fruit = document.getElementById(random.toString());
     fruit.classList.add("fruit");
     fruit_pos = random;
+    fruitTimer = setInterval(spawnFruit, 5000);
   }
 
   function checkCollision(player, fruit) {
     if (player === fruit) {
       console.log("hiiiiiit");
+      mySound = new sound("sounds/click.mp3");
+      mySound.play();
       score += 100;
       score_span.innerText = Number(score);
       spawnFruit();
